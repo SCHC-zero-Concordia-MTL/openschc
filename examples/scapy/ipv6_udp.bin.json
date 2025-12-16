@@ -1,0 +1,142 @@
+{
+  "DeviceID": "lorawan:0080e11511103603",
+  "SoR": [
+    {
+      "RuleID": 28,
+      "RuleIDLength": 8,
+      "Compression": [
+        {
+          "FID": "IPV6.VER",
+          "DI": "BI",
+          "TV": 6,
+          "MO": "EQUAL",
+          "CDA": "NOT-SENT"
+        },
+        {
+          "FID": "IPV6.TC",
+          "DI": "BI",
+          "TV": 0,
+          "MO": "IGNORE",
+          "CDA": "NOT-SENT"
+        },
+        {
+          "FID": "IPV6.FL",
+          "DI": "BI",
+          "TV": 74565,
+          "MO": "IGNORE",
+          "CDA": "NOT-SENT"
+        },
+        {
+          "FID": "IPV6.LEN",
+          "DI": "BI",
+          "TV": 0,
+          "MO": "IGNORE",
+          "CDA": "NOT-SENT"
+        },
+        {
+          "FID": "IPV6.NXT",
+          "DI": "BI",
+          "TV": 17,
+          "MO": "IGNORE",
+          "CDA": "NOT-SENT"
+        },
+        {
+          "FID": "IPV6.HOP_LMT",
+          "DI": "BI",
+          "TV": 64,
+          "MO": "IGNORE",
+          "CDA": "NOT-SENT"
+        },
+        {
+          "FID": "IPV6.DEV_PREFIX",
+          "DI": "BI",
+          "TV": "2001:470:1f20:1d2::/64",
+          "MO": "EQUAL",
+          "CDA": "NOT-SENT"
+        },
+        {
+          "FID": "IPV6.DEV_IID",
+          "DI": "BI",
+          "TV": "::380:773",
+          "MO": "EQUAL",
+          "CDA": "NOT-SENT"
+        },
+        {
+          "FID": "IPV6.APP_PREFIX",
+          "DI": "BI",
+          "TV": "2001:41d0:302:2200::/64",
+          "MO": "EQUAL",
+          "CDA": "NOT-SENT"
+        },
+        {
+          "FID": "IPV6.APP_IID",
+          "DI": "BI",
+          "TV": "::13b3",
+          "MO": "EQUAL",
+          "CDA": "NOT-SENT"
+        },
+        {
+          "FID": "UDP.DEV_PORT",
+          "DI": "BI",
+          "TV": 33333,
+          "MO": "EQUAL",
+          "CDA": "NOT-SENT"
+        },
+        {
+          "FID": "UDP.APP_PORT",
+          "DI": "BI",
+          "TV": 22222,
+          "MO": "EQUAL",
+          "CDA": "NOT-SENT"
+        },
+        {
+          "FID": "UDP.LEN",
+          "DI": "BI",
+          "TV": 0,
+          "MO": "IGNORE",
+          "CDA": "NOT-SENT"
+        },
+        {
+          "FID": "UDP.CKSUM",
+          "DI": "BI",
+          "TV": 0,
+          "MO": "IGNORE",
+          "CDA": "NOT-SENT"
+        }
+      ]
+    },    
+    {
+      "RuleID": 21,    
+      "RuleIDLength": 8,    
+      "Fragmentation": {    
+        "FRMode": "AckOnError",    
+        "FRDirection": "DW",    
+        "FCNSize": 6,    
+        "dtagSize": 2,    
+        "L2WordSize": 8,    
+        "timeout": 150,    
+        "tileSize": 32,    
+        "windowSize": 63,    
+        "WSize": 2,    
+        "maxRetry": 3    
+      }    
+    }, 
+    {
+      "RuleID": 20,
+      "RuleIDLength": 8,
+      "Fragmentation": {
+        "FRMode": "AckOnError",
+        "FRDirection": "UP",
+        "FCNSize": 6,
+        "dtagSize": 2,
+        "L2WordSize": 8,
+        "timeout": 150,
+        "tileSize": 32,
+        "windowSize": 63,
+        "WSize": 2,
+        "maxRetry": 3
+      }
+    }
+  ]
+}
+
