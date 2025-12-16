@@ -19,6 +19,9 @@ import ipaddress
 
 import cbor2 as cbor
 
+# CONSTANTS
+
+
 # Create a Rule Manager and upload the rules.
 rm = RM.RuleManager()
 rm.Add(file="ipv6_udp.bin.json")
@@ -45,7 +48,7 @@ def processPkt(pkt):
                     schc_pkt, addr = tunnel.recvfrom(2000)
                     other_end = "udp:"+addr[0]+":"+str(addr[1])
                     print("other end =", other_end)
-                    uncomp_pkt = schc_machine.schc_recv(device_id=other_end, schc_packet=schc_pkt)                       
+                    uncomp_pkt = schc_machine.schc_recv(device_id=other_end, schc_packet=schc_pkt)                  
                     if uncomp_pkt != None:
                         uncomp_pkt[1].show()
                         send(uncomp_pkt[1], iface="he-ipv6")
@@ -72,15 +75,16 @@ def processPkt(pkt):
                         other_end +=  binascii.hexlify(msg[2]).decode("utf-8")
                         
                         # Decompress packet
+                        print(other_end)
                         print(">decompressing packet...")
                         uncomp_pkt = schc_machine.schc_recv(schc_packet=msg[4], device_id=other_end)
-                        print ("--->", uncomp_pkt) 
+                        print ("--->", uncomp_pkt)
                         if uncomp_pkt != None:
                             print("--- uncomp_pkt[1].show() ---")
                             ipv6udp_packet = uncomp_pkt[1]
                             ipv6udp_packet.show()
                             print(">sending..")
-                            send(ipv6udp_packet, iface="ens3", verbose=True)
+                            #send(ipv6udp_packet, iface="ens3", verbose=True)
                             # print(">sending 2..")
                             # print(ipv6udp_packet.fields.keys())
 
@@ -119,5 +123,5 @@ schc_machine = SCHCProtocol(
     verbose = True)         
 schc_machine.set_rulemanager(rm)
 
-sniff(prn=processPkt, iface=["he-ipv6", "ens3", "lo"]) # , filter="udp port 5683 or udp port 7002"
+sniff(prn=processPkt, iface=["lo"]) #iface=["he-ipv6", "ens3", "lo"]) # , filter="udp port 5683 or udp port 7002"
 

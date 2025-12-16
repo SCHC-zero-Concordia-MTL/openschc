@@ -1,5 +1,5 @@
 {
-  "DeviceID": "lorawan:0080e11511103603",
+  "DeviceID": "lorawan:70b3d57ed00734b9",
   "SoR": [
     {
       "RuleID": 28,
@@ -111,14 +111,17 @@
       "Fragmentation": {    
         "FRMode": "AckOnError",    
         "FRDirection": "DW",    
-        "FCNSize": 6,    
-        "dtagSize": 2,    
-        "L2WordSize": 8,    
-        "timeout": 150,    
-        "tileSize": 32,    
-        "windowSize": 63,    
-        "WSize": 2,    
-        "maxRetry": 3    
+        "FRModeProfile":{
+          "FCNSize": 6,    
+          "dtagSize": 2,    
+          "L2WordSize": 8,    
+          "timeout": 150,    
+          "tileSize": 32,    
+          "windowSize": 63,    
+          "WSize": 2,    
+          "maxRetry": 3,
+          "lastTileInAll1": false
+        }
       }    
     }, 
     {
@@ -127,14 +130,17 @@
       "Fragmentation": {
         "FRMode": "AckOnError",
         "FRDirection": "UP",
-        "FCNSize": 6,
-        "dtagSize": 2,
-        "L2WordSize": 8,
-        "timeout": 150,
-        "tileSize": 32,
-        "windowSize": 63,
-        "WSize": 2,
-        "maxRetry": 3
+        "FRModeProfile": {
+          "FCNSize": 6,
+          "dtagSize": 2,
+          "L2WordSize": 8,
+          "timeout": 150,
+          "tileSize": 32,
+          "windowSize": 63,
+          "WSize": 2,
+          "maxRetry": 3,
+          "lastTileInAll1": false
+        }
       }
     }
   ]

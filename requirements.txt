@@ -1,7 +1,7 @@
 kamene==0.32
 scapy==2.5.0
 python-pcapng
-
+cbor2==5.7.1
 # Libraries required to run examples (data_model.py)
-yangson==1.4.17
-elementpath==4.1.4
+#yangson==1.4.17
+#elementpath==4.1.4
