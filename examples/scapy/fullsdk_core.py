@@ -51,9 +51,10 @@ def processPkt(pkt):
                     uncomp_pkt = schc_machine.schc_recv(device_id=other_end, schc_packet=schc_pkt)                  
                     if uncomp_pkt != None:
                         uncomp_pkt[1].show()
-                        send(uncomp_pkt[1], iface="he-ipv6")
+                        send(uncomp_pkt[1], iface="lo")
                 # IF it's a packet from connector.py
                 elif udp_dport == connector_port:
+                    print("Received from connector.py")
                     schc_msg, addr = connector.recvfrom(2000)
                     print (binascii.hexlify(schc_msg))
                     msg = cbor.loads(schc_msg)
@@ -84,7 +85,7 @@ def processPkt(pkt):
                             ipv6udp_packet = uncomp_pkt[1]
                             ipv6udp_packet.show()
                             print(">sending..")
-                            #send(ipv6udp_packet, iface="ens3", verbose=True)
+                            send(ipv6udp_packet, iface="lo", verbose=True)
                             # print(">sending 2..")
                             # print(ipv6udp_packet.fields.keys())
 
@@ -95,13 +96,14 @@ def processPkt(pkt):
                     
         # IF IPv6:
         elif e_type == 0x86dd:
+                print("Not in tunnel")
                 print (">> GOT IPv6 Packet:\n", binascii.hexlify(bytes(pkt)[14:]))
                 # compress and send (to L2 send())
                 schc_machine.schc_send(bytes(pkt)[14:])
     else:
         print ("tunnel")
         print (">> GOT IPv6 Packet:\n", binascii.hexlify(bytes(pkt)))
-        schc_machine.schc_send(bytes(pkt))
+        schc_machine.schc_send(bytes(pkt), verbose =True)
 
 # Start SCHC Machine
 POSITION = T_POSITION_CORE

@@ -50,28 +50,28 @@
         {
           "FID": "IPV6.DEV_PREFIX",
           "DI": "BI",
-          "TV": "2001:470:1f20:1d2::/64",
+          "TV": "::/64",
           "MO": "EQUAL",
           "CDA": "NOT-SENT"
         },
         {
           "FID": "IPV6.DEV_IID",
           "DI": "BI",
-          "TV": "::380:773",
+          "TV": "::0001",
           "MO": "EQUAL",
           "CDA": "NOT-SENT"
         },
         {
           "FID": "IPV6.APP_PREFIX",
           "DI": "BI",
-          "TV": "2001:41d0:302:2200::/64",
+          "TV": "::/64",
           "MO": "EQUAL",
           "CDA": "NOT-SENT"
         },
         {
           "FID": "IPV6.APP_IID",
           "DI": "BI",
-          "TV": "::13b3",
+          "TV": "::0001",
           "MO": "EQUAL",
           "CDA": "NOT-SENT"
         },
