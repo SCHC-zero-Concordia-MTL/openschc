@@ -42,8 +42,9 @@ def processPkt(pkt):
         if e_type == 0x0800:
             ip_proto = pkt.getlayer(IP).proto
             if ip_proto == 17:
-                udp_dport = pkt.getlayer(UDP).dport
-                if udp_dport == socket_port: # tunnel SCHC msg to be decompressed
+                udp_sport = pkt.getlayer(UDP).sport
+                src_ip = pkt.getlayer(IP).src
+                if False:#udp_dport == socket_port: # tunnel SCHC msg to be decompressed
                     print ("tunneled SCHC msg")                    
                     schc_pkt, addr = tunnel.recvfrom(2000)
                     other_end = "udp:"+addr[0]+":"+str(addr[1])
@@ -53,9 +54,9 @@ def processPkt(pkt):
                         uncomp_pkt[1].show()
                         send(uncomp_pkt[1], iface="lo")
                 # IF it's a packet from connector.py
-                elif udp_dport == connector_port:
+                elif udp_sport == bridge_service_port and src_ip == bridge_service_ip:
                     print("Received from connector.py")
-                    schc_msg, addr = connector.recvfrom(2000)
+                    schc_msg = bytes(pkt.getlayer(UDP).payload)
                     print (binascii.hexlify(schc_msg))
                     msg = cbor.loads(schc_msg)
                     print("msg(dict) =", msg)
@@ -96,10 +97,17 @@ def processPkt(pkt):
                     
         # IF IPv6:
         elif e_type == 0x86dd:
-                print("Not in tunnel")
-                print (">> GOT IPv6 Packet:\n", binascii.hexlify(bytes(pkt)[14:]))
-                # compress and send (to L2 send())
-                schc_machine.schc_send(bytes(pkt)[14:])
+                ip_nh = pkt.getlayer(IPv6).nh
+                if ip_nh == 17:
+                    src_ip = pkt.getlayer(IPv6).src
+                    src_port = pkt.getlayer(UDP).sport
+                    if ipaddress.IPv6Address(src_ip) == ipaddress.IPv6Address("::1") and src_port == 22222:
+                        pkt.getlayer(IPv6).dst = "::1"
+                        pkt.getlayer(UDP).dport = 33333
+                    print("Not in tunnel")
+                    print (">> GOT IPv6 Packet:\n", binascii.hexlify(bytes(pkt)[14:]))
+                    # compress and send (to L2 send())
+                    schc_machine.schc_send(bytes(pkt)[14:], verbose=True)
     else:
         print ("tunnel")
         print (">> GOT IPv6 Packet:\n", binascii.hexlify(bytes(pkt)))
@@ -108,14 +116,20 @@ def processPkt(pkt):
 # Start SCHC Machine
 POSITION = T_POSITION_CORE
 
+'''
 socket_port = 0x5C4C
-connector_port = 33033
 tunnel = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 tunnel.bind(("0.0.0.0", socket_port))
-connector = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-connector.bind(("0.0.0.0", connector_port))
+'''
+bridge_service_ip = "127.0.0.1"
+bridge_service_port = 12345
 
-lower_layer = ScapyLowerLayer(position=POSITION, socket=tunnel, other_end=None)
+schc_gateway_ip = "127.0.0.1"
+schc_gateway_port = 33033
+schc_gateway_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+schc_gateway_sock.bind((schc_gateway_ip, schc_gateway_port))
+
+lower_layer = ScapyLowerLayer(position=POSITION, socket=schc_gateway_sock, other_end=None)
 system = ScapySystem()
 scheduler = system.get_scheduler()
 schc_machine = SCHCProtocol(
@@ -125,5 +139,5 @@ schc_machine = SCHCProtocol(
     verbose = True)         
 schc_machine.set_rulemanager(rm)
 
-sniff(prn=processPkt, iface=["lo"]) #iface=["he-ipv6", "ens3", "lo"]) # , filter="udp port 5683 or udp port 7002"
+sniff(prn=processPkt, iface=["lo"], filter= f"(dst host 127.0.0.1 or dst host ::1) and udp and dst port {schc_gateway_port}") #iface=["he-ipv6", "ens3", "lo"]) # , filter="udp port 5683 or udp port 7002"
 
