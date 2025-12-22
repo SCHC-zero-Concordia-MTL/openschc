@@ -6,7 +6,7 @@ APP_NAME=fullsdk_core
 all: set-env run
 
 run:
-	$(PYTHON_PATH) $(APP_NAME).py
+	sudo $(PYTHON_PATH) $(APP_NAME).py
 
 set-env:
 	export PYTHONPATH="/home/dev/Documents/SCHC_Project/Software/LabSCHC-OpenSCHC2/openschc/src"

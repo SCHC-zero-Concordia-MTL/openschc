@@ -16,11 +16,27 @@ import pprint
 import binascii
 import socket
 import ipaddress
+import configparser
+import os
+import sys
 
 import cbor2 as cbor
 
-# CONSTANTS
+config_ini = configparser.ConfigParser()
+config_path = os.path.join(os.getcwd(), "resources", "network.ini")
+success = config_ini.read(config_path)
 
+if not success:
+    print(f"Could not successfully read the config file on path {config_path}")
+    sys.exit(1)
+
+bridge_service_ip = config_ini["Network"].get("bridge_service_ip")
+bridge_service_port = config_ini["Network"].getint("bridge_service_port")
+schc_gateway_ip = config_ini["Network"].get("schc_gateway_ip")
+schc_gateway_port = config_ini["Network"].getint("schc_gateway_port")
+
+schc_gateway_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+schc_gateway_sock.bind((schc_gateway_ip, schc_gateway_port))
 
 # Create a Rule Manager and upload the rules.
 rm = RM.RuleManager()
@@ -34,6 +50,7 @@ def processPkt(pkt):
     schc_machine and scheduler must be specified as a global variable.
     """
     scheduler.run(session=schc_machine)
+    print(pkt.sniffed_on, pkt.summary())
 
     # look for a tunneled SCHC pkt
     if pkt.getlayer(Ether) != None: #HE tunnel do not have Ethernet
@@ -120,7 +137,7 @@ POSITION = T_POSITION_CORE
 socket_port = 0x5C4C
 tunnel = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 tunnel.bind(("0.0.0.0", socket_port))
-'''
+
 bridge_service_ip = "127.0.0.1"
 bridge_service_port = 12345
 
@@ -128,7 +145,7 @@ schc_gateway_ip = "127.0.0.1"
 schc_gateway_port = 33033
 schc_gateway_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 schc_gateway_sock.bind((schc_gateway_ip, schc_gateway_port))
-
+'''
 lower_layer = ScapyLowerLayer(position=POSITION, socket=schc_gateway_sock, other_end=None)
 system = ScapySystem()
 scheduler = system.get_scheduler()
@@ -139,5 +156,4 @@ schc_machine = SCHCProtocol(
     verbose = True)         
 schc_machine.set_rulemanager(rm)
 
-sniff(prn=processPkt, iface=["lo"], filter= f"(dst host 127.0.0.1 or dst host ::1) and udp and dst port {schc_gateway_port}") #iface=["he-ipv6", "ens3", "lo"]) # , filter="udp port 5683 or udp port 7002"
-
+sniff(prn=processPkt, iface=["lo"], filter= f"inbound and (dst host {schc_gateway_ip} or dst host ::1) and udp and dst port {schc_gateway_port}") #iface=["he-ipv6", "ens3", "lo"]) # , filter="udp port 5683 or udp port 7002"
